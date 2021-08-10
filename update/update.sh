@@ -10,5 +10,5 @@ curl -L https://www.iana.org/time-zones/repository/tzdata-latest.tar.gz | tar -x
 make TOPDIR=. install
 cd ..
 go build
-echo -n "// built from tzdb version " | cat - tzdir/version >../microtzdb.c
+printf "// built from tzdb version $(cat tzdir/version)\n" >../microtzdb.c
 ./microtzdb tzdir/usr/share/zoneinfo >>../microtzdb.c
