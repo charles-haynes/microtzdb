@@ -1,3 +1,4 @@
+// built from tzdb version 2021a
 const char *posix[] = {
   /*   0 */ "GMT0",
   /*   1 */ "EAT-3",
@@ -105,6 +106,7 @@ const char *posix[] = {
 const uint32_t mask = 0x1fffff;
 
 const struct {uint32_t hash:24; uint8_t posix:8;} zones[] = {
+  {   3052,   0}, // Etc/localtime
   {   3177,  12}, // America/Argentina/Buenos_Aires
   {   5424,  77}, // Pacific/Rarotonga
   {   6596,  29}, // Brazil/DeNoronha
@@ -604,7 +606,6 @@ const struct {uint32_t hash:24; uint8_t posix:8;} zones[] = {
   {1722440,   0}, // Africa/Accra
   {1722853,  20}, // America/Indiana/Knox
   {1726451,   5}, // Africa/Tripoli
-  {1730890,   0}, // tzdir/etc/localtime
   {1733838,  23}, // America/Indiana/Vevay
   {1734054,  20}, // America/North_Dakota/Beulah
   {1736591,   7}, // Europe/Paris
@@ -642,7 +643,6 @@ const struct {uint32_t hash:24; uint8_t posix:8;} zones[] = {
   {1884747,  17}, // America/Manaus
   {1894052,   7}, // Europe/Skopje
   {1894752,  35}, // Asia/Vladivostok
-  {1900518,  84}, // Pacific/Kanton
   {1901000,  87}, // Etc/Zulu
   {1902986,  34}, // Asia/Phnom_Penh
   {1904373,  10}, // America/Nome
