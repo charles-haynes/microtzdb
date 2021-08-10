@@ -1,4 +1,7 @@
 // built from tzdb version 2021a
+
+#include <string.h>
+
 const char *posix[] = {
   /*   0 */ "GMT0",
   /*   1 */ "EAT-3",
@@ -702,3 +705,44 @@ const struct {uint32_t hash:24; uint8_t posix:8;} zones[] = {
   {2090334,  57}, // Asia/Jerusalem
   {2094940,  41}, // Asia/Dacca
 };
+
+const uint NumZones = sizeof(zones) / sizeof(zones[0]);
+
+const uint32_t FNV_PRIME = 16777619u;
+const uint32_t OFFSET_BASIS = 2166136261u;
+
+// this function computes the "fnv" hash of a string, ignoring the nul termination
+// https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
+uint32_t fnvHash(const char *str) {
+	uint32_t hash = OFFSET_BASIS;
+	while (*str) {
+		hash ^= uint32_t(*str++);
+		hash *= FNV_PRIME;
+	}
+	return hash;
+}
+
+// this function, given a tz name in "Olson" format (like "Australia/Melbourne")
+// returns the tz in "Posix" format (like "AEST-10AEDT,M10.1.0,M4.1.0/3"), which
+// is what setenv("TZ",...) and settz wants. It does a binary search on the
+// hashed values. It assumes that the "olson" string is a valid timezone name
+// from the same version of the tzdb as it was compiled for. If passed an invalid
+// string the behaviour is undefined.
+const char *getPosixTZforOlson(const char *olson, char *buf, size_t buflen) {
+  static_assert(NumZones > 0, "zones should not be empty");
+  auto olsonHash = fnvHash(olson)&mask;
+  auto i = &zones[0];
+  auto x = &zones[NumZones];
+  while (x - i > 1) {
+    auto m = i + ((x - i) / 2);
+    if (m->hash > olsonHash) {
+      x = m;
+    } else {
+      i = m;
+    }
+  }
+  if (i->hash == olsonHash) {
+    return strncpy(buf, posix[i->posix], buflen);
+  }
+  return nullptr;
+}
